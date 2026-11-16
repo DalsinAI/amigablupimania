@@ -65,7 +65,13 @@ What was changed
 - The pictures are animated WebP upstream. tools/webp_frames.py splits
   each into PNG frames (amiga/image/), which amiga/anim_png.c loads in
   place of src/sdl/SDL3_IMG_webp.c; src/sdl/SDL3_IMG.h gives SDL2_image
-  before 2.6 the IMG_Animation struct.
+  before 2.6 the IMG_Animation struct. Upstream's loader fills slot i with
+  libwebp frame i, and libwebp counts frames from 1 (0 is the last), so
+  slot 0 holds the last frame and slot i frame i-1; amiga/anim_order.h
+  does the same with the PNGs (tests/host/test_anim_order.c), or the
+  colour theme shows the green Smaky 100 pictures.
+  Only the frame the game shows is read (BM_AnimFrame() in src/smaky.c
+  LoadImage): upstream decodes all six 1280x640 frames of each sheet.
 - src/smaky.c: no sys/file.h (libnix has none).
 - amiga/amiga_start.c: 512 KB of stack, the $VER string, PROGDIR:User made
   at start.
