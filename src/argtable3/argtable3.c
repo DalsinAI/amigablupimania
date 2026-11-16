@@ -1464,6 +1464,18 @@ static void warnx(const char* fmt, ...) {
     fprintf(stderr, "%s\n", opterrmsg);
 }
 
+#elif defined(__amigaos__)
+/* libnix has no err.h: warnx() to stderr, as BSD's. */
+#include <stdarg.h>
+#include <stdio.h>
+
+static void warnx(const char* fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    vfprintf(stderr, fmt, ap);
+    va_end(ap);
+    fputc('\n', stderr);
+}
 #else
 #include <err.h>
 #endif /*_WIN32*/
