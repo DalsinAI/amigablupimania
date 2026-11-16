@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Blupimania GlowIcon art, The AmiCradle Team: a round yellow fellow
+       reaching for a red balloon over a chequered floor. -->
+  <defs>
+    <radialGradient id="body" cx="0.38" cy="0.32" r="0.75">
+      <stop offset="0" stop-color="#fff6a8"/>
+      <stop offset="0.55" stop-color="#f5cf1f"/>
+      <stop offset="1" stop-color="#b8860b"/>
+    </radialGradient>
+    <radialGradient id="balloon" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ff9a8a"/>
+      <stop offset="0.5" stop-color="#e2231a"/>
+      <stop offset="1" stop-color="#8e0d08"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7fb2e5"/>
+      <stop offset="1" stop-color="#2f5f9e"/>
+    </linearGradient>
+  </defs>
+  <!-- floor tiles in perspective -->
+  <polygon points="10,104 118,104 126,124 2,124" fill="url(#floor)" stroke="#1d3a63" stroke-width="2"/>
+  <path d="M 37,104 L 33,124 M 64,104 L 64,124 M 91,104 L 95,124 M 6,114 L 122,114" stroke="#1d3a63" stroke-width="1.5" fill="none"/>
+  <!-- shadow -->
+  <ellipse cx="52" cy="106" rx="24" ry="5" fill="#000" opacity="0.3"/>
+  <!-- balloon string -->
+  <path d="M 70,64 C 80,52 86,46 92,38" stroke="#333" stroke-width="2" fill="none"/>
+  <!-- balloon -->
+  <ellipse cx="96" cy="24" rx="17" ry="20" fill="url(#balloon)" stroke="#5c0804" stroke-width="2"/>
+  <path d="M 92,43 L 96,47 L 100,43 Z" fill="#a8110b"/>
+  <ellipse cx="89" cy="15" rx="5" ry="7" fill="#fff" opacity="0.55"/>
+  <!-- legs -->
+  <rect x="38" y="90" width="8" height="14" rx="3" fill="#c89a12" stroke="#5a4200" stroke-width="1.5"/>
+  <rect x="56" y="90" width="8" height="14" rx="3" fill="#c89a12" stroke="#5a4200" stroke-width="1.5"/>
+  <ellipse cx="40" cy="104" rx="8" ry="4" fill="#3a3a3a"/>
+  <ellipse cx="62" cy="104" rx="8" ry="4" fill="#3a3a3a"/>
+  <!-- body -->
+  <circle cx="51" cy="68" r="28" fill="url(#body)" stroke="#5a4200" stroke-width="2.5"/>
+  <!-- hand reaching for the string -->
+  <ellipse cx="72" cy="62" rx="6" ry="5" fill="#f5cf1f" stroke="#5a4200" stroke-width="1.5"/>
+  <!-- eyes -->
+  <ellipse cx="44" cy="62" rx="7" ry="9" fill="#fff" stroke="#333" stroke-width="1.5"/>
+  <ellipse cx="60" cy="62" rx="7" ry="9" fill="#fff" stroke="#333" stroke-width="1.5"/>
+  <circle cx="47" cy="61" r="3.5" fill="#111"/>
+  <circle cx="63" cy="61" r="3.5" fill="#111"/>
+  <!-- nose and smile -->
+  <ellipse cx="52" cy="73" rx="5" ry="4" fill="#e8892a" stroke="#7a3d00" stroke-width="1"/>
+  <path d="M 42,82 Q 52,90 62,82" stroke="#5a2a00" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- highlight -->
+  <ellipse cx="40" cy="50" rx="8" ry="5" fill="#fff" opacity="0.5"/>
+</svg>

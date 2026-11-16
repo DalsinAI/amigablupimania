@@ -1,0 +1,16 @@
+Blupimania: licences
+====================
+
+The game: Blupimania by Daniel Roux and EPSITEC SA (1994-1996), made
+free by Mathieu Schroeter, https://github.com/blupi-games/blupimania.
+
+- The program, its worlds, pictures, sounds and music are under the GNU
+  General Public License, version 3 or later (COPYING.txt; LICENSE.all.txt
+  lists the libraries the PC builds use).
+- CREDITS.txt names the developers, translators, level designers and
+  testers.
+- The Amiga port's own files (amiga/, AMIGA_PORT.md, package/, tools/,
+  tests/) are GPL 3 or later, like the game; the GlowIcon art is The
+  AmiCradle Team's own. amiga/image/ holds upstream's pictures, each
+  animated WebP split into PNG frames (tools/webp_frames.py), unchanged
+  otherwise.

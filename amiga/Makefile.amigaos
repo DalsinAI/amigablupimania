@@ -1,0 +1,77 @@
+# Blupimania for GFOS (AmigaOS 3.2 with GFOpenUp), 68040/68060 + FPU, on
+# GFOpenUp's SDL 2 (LIBS:GFOpenGPU/SDL2.module, SDL2_image.module for the
+# PNG pictures and SDL2_mixer.module for the Ogg music and WAV sounds).
+#
+#   make -f amiga/Makefile.amigaos -j4 [STOVE=/path/to/os32-gcc16-open6]
+#
+# STOVE is a GFOpenAmigaGCC 16.2.0-open6 stove: its prefix/ has the
+# compiler, the NDK and GFOpenGPU's SDL 2 kit (prefix/m68k-amigaos).
+# Upstream's pictures are animated WebP; amiga/image/ has each frame as a
+# PNG (tools/webp_frames.py), read by amiga/anim_png.c in place of
+# src/sdl/SDL3_IMG_webp.c. The data are read from PROGDIR: (BM_SHARE),
+# the players' files go to PROGDIR:User/.
+#
+# Output: build/amigaos/Blupimania/ (the drawer: Blupimania, image/, data/,
+# sound/, music/, ReadMe, Controls, the licences, User/, with GlowIcons),
+# build/amigaos/Blupimania.info and Install-Blupimania beside them.
+
+STOVE   ?= $(HOME)/AmiCradle/stoves/os32-gcc16-open6
+PREFIX  ?= $(STOVE)/prefix
+SDL2KIT ?= $(PREFIX)/m68k-amigaos
+CC      = $(PREFIX)/bin/m68k-amigaos-gcc
+CPU     ?= -m68040 -m68881
+# -fno-tree-loop-distribute-patterns: GCC 16's loop miscompile (the kit's
+# sdl2-config gives it for GCC 16 too).
+OPT     ?= -O2 -fomit-frame-pointer -fno-tree-loop-distribute-patterns
+
+INC     = -Iamiga/include -Isrc -I$(SDL2KIT)/include -I$(SDL2KIT)/include/SDL2
+CFLAGS  = -noixemul $(OPT) $(CPU) -std=gnu11 -Wall $(INC)
+LDFLAGS = -noixemul $(CPU)
+LIBS    = -L$(SDL2KIT)/lib -lSDL2_image -lSDL2_mixer -lSDL2 -lm
+
+BUILD   = build/amigaos
+OBJDIR  = $(BUILD)/obj
+OUT     = $(BUILD)/Blupimania
+PROG    = Blupimania
+
+SRC     = $(wildcard src/*.c) src/argtable3/argtable3.c \
+          amiga/anim_png.c amiga/amiga_start.c
+OBJS    = $(SRC:%.c=$(OBJDIR)/%.o)
+
+all: $(OUT)/$(PROG) package
+
+$(OUT)/$(PROG): $(OBJS)
+	@mkdir -p $(OUT)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+package: $(OUT)/$(PROG) AMIGA_PORT.md COPYING CREDITS LICENSE.all amiga/Licences.txt amiga/Controls
+	rm -rf $(OUT)/image $(OUT)/data $(OUT)/sound $(OUT)/music
+	mkdir -p $(OUT)/User $(OUT)/image
+	cp -R amiga/image/. $(OUT)/image/
+	cp resources/image/cursor.image.png resources/image/cursor.smaky.png $(OUT)/image/
+	cp -R resources/data $(OUT)/data
+	cp -R resources/sound $(OUT)/sound
+	cp -R resources/music $(OUT)/music
+	cp AMIGA_PORT.md $(OUT)/ReadMe
+	cp amiga/Controls $(OUT)/Controls
+	cp COPYING $(OUT)/COPYING.txt
+	cp CREDITS $(OUT)/CREDITS.txt
+	cp LICENSE.all $(OUT)/LICENSE.all.txt
+	cp amiga/Licences.txt $(OUT)/Licences.txt
+	cp amiga/icons/Blupimania.info amiga/icons/ReadMe.info $(OUT)/
+	for f in Controls COPYING.txt CREDITS.txt LICENSE.all.txt Licences.txt; do \
+	    cp amiga/icons/ReadMe.info $(OUT)/$$f.info; done
+	cp amiga/icons/Data.info $(OUT)/User.info
+	cp amiga/icons/Blupimania-drawer.info $(BUILD)/Blupimania.info
+	cp amiga/Install-Blupimania amiga/Install-Blupimania.info $(BUILD)/
+
+$(OBJDIR)/%.o: %.c $(wildcard src/*.h src/sdl/*.h)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+objs: $(OBJS)
+
+clean:
+	rm -rf $(BUILD)
+
+.PHONY: all package objs clean

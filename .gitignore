@@ -4,3 +4,5 @@
 /build/
 .directory
 *.kdev4
+build/
+build-amiga-package/

@@ -497,7 +497,7 @@ LoadMouseCursor ()
   char cursorFile[4096] = {0};
   snprintf (
     cursorFile, sizeof (cursorFile),
-    "%s../share/blupimania/image/cursor.%s.png", g_basePath,
+    "%s" BM_SHARE "image/cursor.%s.png", g_basePath,
     g_theme == 0 ? "image" : "smaky");
 
   SDL_Surface * surface       = IMG_Load (cursorFile);
@@ -711,15 +711,21 @@ MondeMax (char banque)
     maxmonde++; /* si construit -> toujours un monde vide à la fin */
 }
 
+/* The worlds are stored big-endian (the Smaky was a 68000): swapped on a
+ * little-endian machine, as they are on a big-endian one (the Amiga). */
 static void
 convshort (short * s)
 {
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
   char   t;
   char * p = (char *) s;
 
   t    = p[0];
   p[0] = p[1];
   p[1] = t;
+#else
+  (void) s;
+#endif
 }
 
 static void
