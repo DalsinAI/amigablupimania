@@ -1,0 +1,6 @@
+.DS_Store
+/Debug/
+/Release/
+/build/
+.directory
+*.kdev4
