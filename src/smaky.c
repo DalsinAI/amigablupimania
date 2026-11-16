@@ -1210,8 +1210,14 @@ LoadImage (int numero, Pixmap * pim, Style style)
     }
   }
 
+#ifdef __amigaos__
+  /* the one frame shown is read now (amiga/anim_png.c) */
+  texture = SDL_CreateTextureFromSurface (
+    g_renderer, BM_AnimFrame (animCache[numero], index));
+#else
   texture =
     SDL_CreateTextureFromSurface (g_renderer, animCache[numero]->frames[index]);
+#endif
 
   Uint32 format;
   Sint32 access, ow, oh;
@@ -1467,7 +1473,11 @@ UnloadAnim ()
   for (int i = 0; i < countof (animCache); ++i)
     if (animCache[i])
     {
+#ifdef __amigaos__
+      BM_FreeAnimation (animCache[i]);
+#else
       IMG_FreeAnimation (animCache[i]);
+#endif
       animCache[i] = NULL;
     }
 }
