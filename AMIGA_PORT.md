@@ -73,6 +73,10 @@ What was changed
   Only the frame the game shows is read (BM_AnimFrame() in src/smaky.c
   LoadImage): upstream decodes all six 1280x640 frames of each sheet.
 - src/smaky.c: no sys/file.h (libnix has none).
+- src/play.c: the 50 ms frame timer sends a tick only when the last one
+  has been taken. A frame can take longer than 50 ms on a 68040, and the
+  queued ticks made the game answer clicks and keys seconds late (lab).
+  Lab only: it is timing on the real machine, no host test reaches it.
 - amiga/amiga_start.c: 512 KB of stack, the $VER string, PROGDIR:User made
   at start.
 - amiga/: the Makefile, the GlowIcons (our own art), the Installer script
