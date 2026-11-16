@@ -5751,10 +5751,21 @@ PushUserEvent (Sint32 code, void * data)
   SDL_PushEvent (&event);
 }
 
+#ifdef __amigaos__
+/* On a 68040 a frame can take longer than the timer's 50 ms; the ticks
+ * then queue up behind it and the game answers clicks and keys later and
+ * later. A tick is only sent when the last one has been taken. */
+static SDL_atomic_t tickPending;
+#endif
+
 static Uint32
 MainLoop (Uint32 interval, void * param)
 {
   static int skip;
+#ifdef __amigaos__
+  if (!SDL_AtomicCAS (&tickPending, 0, 1))
+    return interval;
+#endif
   PushUserEvent (FRAME_TICK, NULL);
   ++skip;
   return interval;
@@ -5838,6 +5849,11 @@ main (int argc, char * argv[])
   while (SDL_WaitEvent (&event))
   {
     next = SDL_FALSE;
+
+#ifdef __amigaos__
+    if (event.type == SDL_USEREVENT && event.user.code == FRAME_TICK)
+      SDL_AtomicSet (&tickPending, 0);
+#endif
 
     if (
       event.type == SDL_RENDER_DEVICE_RESET ||
