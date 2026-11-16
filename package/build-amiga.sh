@@ -23,3 +23,10 @@ if [ -x "$STOVE/prefix/bin/m68k-amigaos-gcc" ]; then PREFIX="$STOVE/prefix"; els
 make -f amiga/Makefile.amigaos STOVE="$STOVE" PREFIX="$PREFIX" -j4 $TARGET > "$OUT/build-output.txt" 2>&1 || { tail -n 60 "$OUT/build-output.txt"; exit 1; }
 
 python3 "$ROOT/tools/pack_dist.py" --dist "$DIST" --name "$NAME" --out "$OUT"
+
+# Lab-only branch: the unpacked drawer too, for a lab with no LhA, and
+# a list of any Amiga archivers in the stove.
+mkdir -p "$OUT/unpacked"
+cp -R "$DIST/." "$OUT/unpacked/"
+rm -rf "$OUT/unpacked/obj"
+find "$STOVE" \( -iname '*lha*' -o -iname '*lzx*' -o -iname 'xad*' -o -iname 'unarc*' \) 2>/dev/null | head -50 > "$OUT/archivers.txt" || true
