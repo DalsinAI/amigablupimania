@@ -53,6 +53,13 @@ extern int g_settingsOverload;
 #define MAJREV 1 /* révision */
 #define MINREV 0 /* version */
 
+/* where the data are, from the program's folder */
+#ifdef __amigaos__
+#define BM_SHARE "" /* beside the program, in its drawer */
+#else
+#define BM_SHARE "../share/blupimania/"
+#endif
+
 #define LXIMAGE() 640 /* largeur d'une image */
 #define LYIMAGE() 340 /* hauteur d'une image */
 

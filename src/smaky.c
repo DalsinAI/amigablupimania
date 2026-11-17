@@ -10,7 +10,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef __amigaos__
 #include <sys/file.h>
+#endif
 #include <time.h>
 
 #include "actions.h"
@@ -241,7 +243,7 @@ MusicStart (short song)
 
   char filename[4096];
   snprintf (
-    filename, sizeof (filename), "%s../share/blupimania/music/%s", g_basePath,
+    filename, sizeof (filename), "%s" BM_SHARE "music/%s", g_basePath,
     musics[idx]);
 
   if (g_music)
@@ -1169,7 +1171,7 @@ LoadImage (int numero, Pixmap * pim, Style style)
     lang = "";
 
   snprintf (
-    name, sizeof (name), "%s../share/blupimania/image/%sblupix%02d.webp",
+    name, sizeof (name), "%s" BM_SHARE "image/%sblupix%02d.webp",
     g_basePath, lang, numero);
 
   SDL_Texture * texture;
@@ -1208,8 +1210,14 @@ LoadImage (int numero, Pixmap * pim, Style style)
     }
   }
 
+#ifdef __amigaos__
+  /* the one frame shown is read now (amiga/anim_png.c) */
+  texture = SDL_CreateTextureFromSurface (
+    g_renderer, BM_AnimFrame (animCache[numero], index));
+#else
   texture =
     SDL_CreateTextureFromSurface (g_renderer, animCache[numero]->frames[index]);
+#endif
 
   Uint32 format;
   Sint32 access, ow, oh;
@@ -1465,7 +1473,11 @@ UnloadAnim ()
   for (int i = 0; i < countof (animCache); ++i)
     if (animCache[i])
     {
+#ifdef __amigaos__
+      BM_FreeAnimation (animCache[i]);
+#else
       IMG_FreeAnimation (animCache[i]);
+#endif
       animCache[i] = NULL;
     }
 }
@@ -1561,7 +1573,7 @@ LoadSounds (void)
   {
     char filename[4096];
     snprintf (
-      filename, sizeof (filename), "%s../share/blupimania/sound/%s", g_basePath,
+      filename, sizeof (filename), "%s" BM_SHARE "sound/%s", g_basePath,
       sounds[i]);
     Mix_Chunk * chunk = Mix_LoadWAV (filename);
     if (!chunk)
@@ -1633,13 +1645,18 @@ getLocationPattern (char file, char * filename, size_t length)
 
   if (isShare (file))
     snprintf (
-      filename, length, "%s../share/blupimania/data/%sblupixa.dat", g_basePath,
+      filename, length, "%s" BM_SHARE "data/%sblupixa.dat", g_basePath,
       lang);
   else
   {
+#ifdef __amigaos__
+    /* the drawer's User/, made at start (amiga/amiga_start.c) */
+    snprintf (filename, length, "PROGDIR:User/blupixa.dat");
+#else
     char * prefPath = SDL_GetPrefPath ("Epsitec SA", "Blupimania");
     snprintf (filename, length, "%sblupixa.dat", prefPath);
     SDL_free (prefPath);
+#endif
   }
 }
 
@@ -1994,7 +2011,12 @@ OpenMachine (int argc, char * argv[], struct arguments * arguments)
   }
 
   g_colors   = g_colorsTheme[g_theme];
+#ifdef __amigaos__
+  /* the drawer the program was started from */
+  g_basePath = SDL_strdup ("PROGDIR:");
+#else
   g_basePath = SDL_GetBasePath ();
+#endif
 
 #ifdef __LINUX__
   if (!getenv ("ALSA_CONFIG_DIR"))

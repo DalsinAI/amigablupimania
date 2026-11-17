@@ -497,7 +497,7 @@ LoadMouseCursor ()
   char cursorFile[4096] = {0};
   snprintf (
     cursorFile, sizeof (cursorFile),
-    "%s../share/blupimania/image/cursor.%s.png", g_basePath,
+    "%s" BM_SHARE "image/cursor.%s.png", g_basePath,
     g_theme == 0 ? "image" : "smaky");
 
   SDL_Surface * surface       = IMG_Load (cursorFile);
@@ -711,15 +711,21 @@ MondeMax (char banque)
     maxmonde++; /* si construit -> toujours un monde vide à la fin */
 }
 
+/* The worlds are stored big-endian (the Smaky was a 68000): swapped on a
+ * little-endian machine, as they are on a big-endian one (the Amiga). */
 static void
 convshort (short * s)
 {
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
   char   t;
   char * p = (char *) s;
 
   t    = p[0];
   p[0] = p[1];
   p[1] = t;
+#else
+  (void) s;
+#endif
 }
 
 static void
@@ -5745,10 +5751,21 @@ PushUserEvent (Sint32 code, void * data)
   SDL_PushEvent (&event);
 }
 
+#ifdef __amigaos__
+/* On a 68040 a frame can take longer than the timer's 50 ms; the ticks
+ * then queue up behind it and the game answers clicks and keys later and
+ * later. A tick is only sent when the last one has been taken. */
+static SDL_atomic_t tickPending;
+#endif
+
 static Uint32
 MainLoop (Uint32 interval, void * param)
 {
   static int skip;
+#ifdef __amigaos__
+  if (!SDL_AtomicCAS (&tickPending, 0, 1))
+    return interval;
+#endif
   PushUserEvent (FRAME_TICK, NULL);
   ++skip;
   return interval;
@@ -5832,6 +5849,11 @@ main (int argc, char * argv[])
   while (SDL_WaitEvent (&event))
   {
     next = SDL_FALSE;
+
+#ifdef __amigaos__
+    if (event.type == SDL_USEREVENT && event.user.code == FRAME_TICK)
+      SDL_AtomicSet (&tickPending, 0);
+#endif
 
     if (
       event.type == SDL_RENDER_DEVICE_RESET ||
