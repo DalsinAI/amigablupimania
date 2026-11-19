@@ -4,7 +4,7 @@ on:
 jobs:
   build-project:
     name: Dynamic-link build (in Debian unstable)
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, amigagfosports]
     container: debian:unstable
     steps:
       - name: Checkout
