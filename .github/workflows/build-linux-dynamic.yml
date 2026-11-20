@@ -3,18 +3,21 @@ on:
   push:
 jobs:
   build-project:
-    name: Dynamic-link build (in Debian unstable)
-    runs-on: ubuntu-latest
-    container: debian:unstable
+    name: Dynamic-link build
+    # org runner (bigguy, one fresh container per job, no docker)
+    runs-on: [self-hosted, lumavault]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
 
       - name: Install build-dependencies
-        run: apt-get update; apt-get install -y --no-install-recommends  cmake build-essential libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libwebp-dev pkg-config ronn
+        run: |
+          S=$([ "$(id -u)" = 0 ] || echo sudo)
+          $S apt-get update
+          $S env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends cmake build-essential libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libwebp-dev pkg-config ronn
 
       - name: Run cmake configure
         run: cmake . -B ./build
 
       - name: Run cmake build
-        run: cmake --build ./build
+        run: cmake --build ./build -j"$(nproc)"
