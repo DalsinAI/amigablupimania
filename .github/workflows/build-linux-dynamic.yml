@@ -4,7 +4,8 @@ on:
 jobs:
   build-project:
     name: Dynamic-link build (in Debian unstable)
-    runs-on: [self-hosted, lumavault]
+    # needs a docker image, and the org runners have no docker
+    runs-on: ubuntu-latest
     container: debian:unstable
     steps:
       - name: Checkout
