@@ -1,5 +1,5 @@
 
-cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.5)
 
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -158,7 +158,9 @@ if (NOT BUILD_JS)
   else ()
     find_package (SDL2 REQUIRED)
     find_package (SDL2_image REQUIRED)
-    find_package (WebP REQUIRED)
+    if (NOT TARGET WebP::webpdemux)
+      find_package (WebP REQUIRED)
+    endif ()
     find_package (SDL2_mixer REQUIRED)
   endif ()
 endif ()
@@ -224,6 +226,7 @@ else ()
     SDL2::SDL2
     SDL2_image::SDL2_image
     WebP::webpdemux
+    WebP::webp
     SDL2_mixer::SDL2_mixer
     ${CURL_LIBRARIES}
     pthread
